@@ -9,7 +9,6 @@ const LoginComponent = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // API URL을 환경 변수에서 가져옴
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e) => {
@@ -21,11 +20,14 @@ const LoginComponent = () => {
         password,
       });
 
-      // 로그인 성공 시, 클라이언트의 로그인 상태를 업데이트
-      login(userId); // userId를 Context에 저장
-      navigate('/guide'); // 로그인 후 guide 페이지로 리다이렉트
+      login(userId); // 로그인 상태를 Context에 저장
+      navigate('/guide'); // 로그인 성공 후 페이지 리다이렉트
     } catch (error) {
-      alert('Error logging in');
+      if (error.response) {
+        alert(`Error logging in: ${error.response.data.message}`);
+      } else {
+        alert('Error logging in');
+      }
     }
   };
 

@@ -7,24 +7,25 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const { login } = useAuth();
 
-  // API URL을 환경 변수에서 가져옴
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // 서버로 로그인 요청을 보냄
       const response = await axios.post(`${API_URL}/login`, {
         userId,
         password,
       });
 
-      // 로그인 성공 시, 클라이언트의 로그인 상태를 업데이트
-      login();
+      login(); // 로그인 상태를 Context에 저장
       alert('Logged in successfully');
     } catch (error) {
-      alert('Error logging in');
+      if (error.response) {
+        alert(`Error logging in: ${error.response.data.message}`);
+      } else {
+        alert('Error logging in');
+      }
     }
   };
 
