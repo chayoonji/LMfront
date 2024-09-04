@@ -39,7 +39,7 @@ const UploadButton = () => {
 
     try {
       const response = await axios.post(
-        `${API_URL}/upload/${userId}`,
+        `/upload/${userId}`,
         {},
         {
           headers: {
@@ -64,7 +64,7 @@ const UploadButton = () => {
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
           placeholder="Enter User ID"
-          className="upload-input"
+          className="upload-input"/
         />
         <button onClick={handleSetUserId} className="upload-button">
           Set User ID
