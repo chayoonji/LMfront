@@ -6,6 +6,7 @@ const UploadButton = () => {
   const [userId, setUserId] = useState('');
   const [isUserIdSet, setIsUserIdSet] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [files, setFiles] = useState(null); // 파일 상태 추가
 
   const API_URL = import.meta.env.VITE_API_URL; // API URL을 환경 변수에서 가져옴
 
@@ -17,7 +18,6 @@ const UploadButton = () => {
       console.log(response.data.message);
       setIsUserIdSet(true);
       setSuccessMessage('User ID has been set successfully!');
-      // 데이터 초기화
       resetData();
     } catch (error) {
       console.error('Error setting user ID:', error);
@@ -26,8 +26,12 @@ const UploadButton = () => {
   };
 
   const resetData = () => {
-    // 데이터 초기화 로직 추가 (예: 상태를 리셋하거나, 필요시 추가 작업 수행)
-    setUserId(''); // 예시로 User ID 입력 필드를 비웁니다.
+    setUserId('');
+    setFiles(null); // 파일 상태 초기화
+  };
+
+  const handleFileChange = (event) => {
+    setFiles(event.target.files); // 선택한 파일들 상태 저장
   };
 
   const handleUpload = async () => {
@@ -37,18 +41,25 @@ const UploadButton = () => {
       return;
     }
 
+    const formData = new FormData();
+    if (files) {
+      Array.from(files).forEach((file) => {
+        formData.append('files', file); // 파일들을 FormData에 추가
+      });
+    }
+
     try {
       const response = await axios.post(
         `${API_URL}/upload/${userId}`,
-        {},
+        formData,
         {
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data', // multipart/form-data로 설정
           },
         }
       );
       console.log(response.data);
-      setSuccessMessage('File uploaded successfully!');
+      setSuccessMessage('Files uploaded successfully!');
     } catch (error) {
       console.error('Error uploading files:', error);
       setSuccessMessage('File upload failed. Please try again.');
@@ -70,6 +81,12 @@ const UploadButton = () => {
           Set User ID
         </button>
       </div>
+      <input
+        type="file"
+        multiple
+        onChange={handleFileChange} // 파일 선택 핸들러
+        className="upload-input"
+      />
       <button onClick={handleUpload} className="upload-button">
         Upload
       </button>
