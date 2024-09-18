@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaArrowLeft } from 'react-icons/fa';
 import './PostDetail.css';
+import { useAuth } from './Context/AuthContext';
 
 const PasswordModal = ({ onClose, onConfirm }) => {
   const [password, setPassword] = useState('');
@@ -13,21 +14,21 @@ const PasswordModal = ({ onClose, onConfirm }) => {
   };
 
   return (
-    <div className="modal-background">
-      <div className="modal-content">
-        <h2 className="modal-title">비밀번호 확인</h2>
+    <div className="delete-modal-background">
+      <div className="delete-modal-content">
+        <h2 className="delete-modal-title">비밀번호 확인</h2>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="modal-input"
+          className="delete-modal-input"
           placeholder="비밀번호를 입력하세요"
         />
-        <div className="modal-buttons">
-          <button className="modal-button" onClick={onClose}>
+        <div className="delete-modal-buttons">
+          <button className="delete-modal-button" onClick={onClose}>
             취소
           </button>
-          <button className="modal-button" onClick={handleConfirm}>
+          <button className="delete-modal-button" onClick={handleConfirm}>
             확인
           </button>
         </div>
@@ -42,6 +43,7 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { isAdmin } = useAuth(); // AuthContext에서 isAdmin 상태 가져오기
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
@@ -154,6 +156,8 @@ const PostDetail = () => {
   if (error) return <div>{error}</div>;
   if (!post) return <div>게시물을 찾을 수 없습니다.</div>;
 
+  const isNotice = post.title.startsWith('[공지]');
+
   return (
     <div className="post-detail-page">
       <div className="post-detail-container">
@@ -192,24 +196,28 @@ const PostDetail = () => {
             </div>
 
             <div className="post-detail-buttons">
-              <button
-                className="edit-button"
-                onClick={() => setShowEditForm(true)}
-              >
-                수정
-              </button>
-              <button
-                className="delete-button"
-                onClick={() => setShowPasswordModal(true)}
-              >
-                삭제
-              </button>
-              <button
-                className="diagnosis-button"
-                onClick={handleDiagnosisClick}
-              >
-                진단 결과 보기
-              </button>
+              {!isNotice && (
+                <>
+                  <button
+                    className="edit-button"
+                    onClick={() => setShowEditForm(true)}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className="delete-button"
+                    onClick={() => setShowPasswordModal(true)}
+                  >
+                    삭제
+                  </button>
+                  <button
+                    className="diagnosis-button"
+                    onClick={handleDiagnosisClick}
+                  >
+                    진단 결과 보기
+                  </button>
+                </>
+              )}
             </div>
           </>
         )}
@@ -250,7 +258,7 @@ const PostDetail = () => {
                 <button onClick={() => handleRemoveFile(index)}>삭제</button>
               </div>
             ))}
-            <button onClick={handleAddFile}>파일 추가</button>
+            {isAdmin && <button onClick={handleAddFile}>파일 추가</button>}
             <div className="edit-form-buttons">
               <button onClick={handleUpdatePost}>저장</button>
               <button onClick={() => setShowEditForm(false)}>취소</button>
