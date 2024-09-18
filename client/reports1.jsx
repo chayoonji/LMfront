@@ -90,9 +90,9 @@ function Reports1() {
       }}
     >
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center', width: '70%' }}>
+        <div style={{ textAlign: 'center', width: '80%' }}>
           <h4 style={{ marginBottom: '10px' }}>CPU 사용률 및 코어 수</h4>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={200}>
             <LineChart
               data={
                 cpuData.length > 0
