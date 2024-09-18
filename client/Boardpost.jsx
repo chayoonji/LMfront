@@ -34,6 +34,7 @@ const Board = () => {
         console.error('Error fetching posts:', error.message);
       }
     };
+
     fetchPosts();
   }, [location.state?.refresh]);
 
@@ -211,6 +212,7 @@ const Board = () => {
                   >
                     <h2>{post.title}</h2>
                     <small>작성자: {post.author}</small>
+                    <small>진행 상태: {post.status}</small>
                   </div>
                 ))
               ) : (
