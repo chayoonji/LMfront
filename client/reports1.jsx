@@ -84,9 +84,9 @@ function Reports1() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        height: '90vh',
-        paddingTop: '20px',
+        justifyContent: 'flex-start', // Aligned slightly higher
+        height: '80vh', // Slightly reduced height for better central alignment
+        paddingTop: '5px', // Reduced top padding to move charts upward
       }}
     >
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
@@ -168,9 +168,13 @@ function Reports1() {
           marginTop: '10px',
         }}
       >
-        <div style={{ textAlign: 'center', width: '70%' }}>
+        <div style={{ textAlign: 'center', width: '80%' }}>
+          {' '}
+          {/* Increased width to 80% */}
           <h4 style={{ marginBottom: '10px' }}>CPU 시간 비율</h4>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={200}>
+            {' '}
+            {/* Reduced height */}
             <LineChart
               data={
                 cpuTime.length > 0

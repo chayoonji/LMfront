@@ -27,7 +27,7 @@ function JuTongGiBanChuiYakJum() {
     // 데이터를 가져오고 업데이트하는 함수
     const fetchDataAndUpdate = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/data`);
+        const response = await axios.get('http://localhost:3002/api/data');
         const chartData = response.data;
 
         if (chartData.length >= 1) {
@@ -44,7 +44,7 @@ function JuTongGiBanChuiYakJum() {
     };
 
     fetchDataAndUpdate();
-  }, [API_URL]);
+  }, []);
 
   return (
     <div

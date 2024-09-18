@@ -10,7 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Diagnosis = () => {
   const [data, setData] = useState([]);
@@ -19,11 +19,12 @@ const Diagnosis = () => {
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [limit] = useState(10); // 페이지당 항목 수
+  const [limit] = useState(4); // 페이지당 항목 수
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [diagnosisResults, setDiagnosisResults] = useState([]);
-  const navigate = useNavigate(); // Hook to navigate programmatically
+  const [showHelp, setShowHelp] = useState(false); // 도움말 창 상태
+  const navigate = useNavigate(); // 프로그래밍적으로 네비게이션
 
   // 백엔드 API URL을 환경 변수에서 가져옴
   const API_URL = import.meta.env.VITE_API_URL;
@@ -33,26 +34,21 @@ const Diagnosis = () => {
       try {
         const [dataResponse, textResponse, diagnosisResponse] =
           await Promise.all([
-            axios.get(`${API_URL}/api/data`),
+            axios.get(`${API_URL}/api/data`), // API에서 데이터를 가져옴
             axios.get(
               `${API_URL}/api/search-text-data?page=${page}&limit=${
                 isSearching ? limit : 4
               }&query=${query}`
-            ),
+            ), // 검색 쿼리 및 페이징 적용
             axios.get(`${API_URL}/api/diagnosis-results`), // 취약한 결과를 가져오는 API 호출
           ]);
 
-        console.log('Fetched data:', dataResponse.data);
         setData(dataResponse.data);
-
-        console.log('Fetched text data:', textResponse.data);
         setTextData(textResponse.data.data);
         setTotalPages(textResponse.data.totalPages);
-
-        console.log('Fetched diagnosis results:', diagnosisResponse.data);
         setDiagnosisResults(diagnosisResponse.data);
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('데이터를 불러오는 중 오류가 발생했습니다:', err);
         setError('데이터를 불러오는 중 오류가 발생했습니다.');
       } finally {
         setLoading(false);
@@ -67,22 +63,25 @@ const Diagnosis = () => {
     setIsSearching(true); // 검색 모드 활성화
   };
 
-  if (loading) return <div>Loading...</div>;
+  const handleViewSolution = (id) => {
+    navigate(`/solution/${id}`); // 취약한 결과의 ID를 사용해 솔루션 페이지로 이동
+  };
+
+  const toggleHelp = () => {
+    setShowHelp(!showHelp); // 도움말 창을 토글
+  };
+
+  if (loading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
 
   if (data.length === 0) return <div>데이터가 없습니다.</div>;
 
-  // Transform data to match chart format
-  const chartData = data[0].data.map((item) => ({
-    name: item.name,
-    value: item.value,
-  }));
-
-  console.log('Chart Data:', chartData);
-
-  const handleViewSolution = (id) => {
-    navigate(`/solution/${id}`); // Navigate to the solution page with the result ID
-  };
+  // 차트 데이터 변환
+  const chartData =
+    data[0]?.data.map((item) => ({
+      name: item.name,
+      value: item.value,
+    })) || [];
 
   return (
     <div
@@ -93,11 +92,76 @@ const Diagnosis = () => {
         color: '#E0E0E0',
       }}
     >
-      <h1 style={{ color: '#FFFFFF', fontSize: '24px', marginBottom: '20px' }}>
-        진단 결과
-      </h1>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'relative',
+        }}
+      >
+        <h1
+          style={{
+            color: '#FFFFFF',
+            fontSize: '30px', // 글씨 크기 증가
+            marginBottom: '20px',
+            textAlign: 'center',
+            width: '100%',
+          }}
+        >
+          진단 결과
+        </h1>
 
-      {/* Search */}
+        {/* 도움말 버튼 */}
+        <button
+          onMouseEnter={() => setShowHelp(true)}
+          onMouseLeave={() => setShowHelp(false)}
+          style={{
+            position: 'absolute',
+            right: '15px',
+            top: '20px',
+            padding: '5px 10px',
+            fontSize: '12px',
+            borderRadius: '4px',
+            backgroundColor: '#6200EA',
+            color: '#FFFFFF',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          ?
+        </button>
+
+        {/* 도움말 창 */}
+        {showHelp && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '30px',
+              right: '150px',
+              width: '350px',
+              backgroundColor: '#FFFFFF',
+              color: '#000000',
+              border: '1px solid #6200EA',
+              borderRadius: '4px',
+              padding: '10px',
+              zIndex: 1000,
+              textAlign: 'left',
+            }}
+          >
+            <strong>검색 도움말</strong>
+            <p>검색은 아래 항목에 대해 가능합니다:</p>
+            <ul>
+              <li>분류 (계정관리 등)</li>
+              <li>결과 (양호, 취약 등)</li>
+              <li>결과상세 (세부 설명 내용)</li>
+            </ul>
+            <p>해당 항목 중 하나를 입력하여 검색을 진행하세요.</p>
+          </div>
+        )}
+      </div>
+
+      {/* 검색 */}
       <div
         style={{
           marginBottom: '20px',
@@ -108,7 +172,7 @@ const Diagnosis = () => {
       >
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="검색..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           style={{
@@ -135,7 +199,7 @@ const Diagnosis = () => {
         </button>
       </div>
 
-      {/* Text Data Table */}
+      {/* 텍스트 데이터 테이블 */}
       <div
         style={{ marginBottom: '50px', maxWidth: '1200px', margin: '0 auto' }}
       >
@@ -151,7 +215,6 @@ const Diagnosis = () => {
         >
           <thead>
             <tr style={{ backgroundColor: '#2E3A59', color: '#FFFFFF' }}>
-              {/* Filter out _id and move id to the first column */}
               {textData[0] &&
                 Object.keys(textData[0])
                   .filter((key) => key !== '_id')
@@ -199,8 +262,8 @@ const Diagnosis = () => {
           </tbody>
         </table>
 
-        {/* Pagination Controls */}
-        {isSearching && totalPages > 1 && (
+        {/* 페이지네이션 컨트롤 */}
+        {totalPages > 1 && (
           <div
             style={{
               marginTop: '20px',
@@ -248,10 +311,10 @@ const Diagnosis = () => {
         )}
       </div>
 
-      {/* Total Results */}
+      {/* 총 결과 */}
       <h3 style={{ marginBottom: '20px', color: '#FFFFFF' }}>총 결과</h3>
 
-      {/* Line Chart */}
+      {/* 라인 차트 */}
       <div
         style={{
           maxWidth: '1200px',

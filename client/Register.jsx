@@ -10,11 +10,32 @@ const Register = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [idCheckResult, setIdCheckResult] = useState('');
+  const [passwordError, setPasswordError] = useState(''); // 패스워드 에러 메시지 상태 추가
 
   const API_URL = import.meta.env.VITE_API_URL; // API URL을 환경 변수에서 가져옴
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 패스워드 유효성 검사: 최소 8자, 숫자, 영문, 특수문자 포함
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      // 에러 메시지 설정
+      if (!/(?=.*[a-zA-Z])/.test(password)) {
+        setPasswordError('영문자를 포함해야 합니다.');
+      } else if (!/(?=.*\d)/.test(password)) {
+        setPasswordError('숫자를 포함해야 합니다.');
+      } else if (!/(?=.*[@$!%*?&])/.test(password)) {
+        setPasswordError('특수문자를 포함해야 합니다.');
+      } else if (password.length < 8) {
+        setPasswordError('비밀번호는 8자리 이상이어야 합니다.');
+      }
+      return;
+    }
+
+    setPasswordError(''); // 에러가 없으면 초기화
 
     if (!isVerified) {
       alert('Please verify your company email first');
@@ -182,6 +203,8 @@ const Register = () => {
           onChange={(e) => setPassword(e.target.value)}
           style={reducedMarginStyle}
         />
+        {/* 패스워드 에러 메시지 표시 */}
+        {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
         <div className="button-container">
           <input type="submit" value="Register" style={{ height: '40px' }} />
         </div>

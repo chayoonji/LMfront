@@ -46,30 +46,6 @@ function Reports2() {
   }, [API_URL]);
 
   useEffect(() => {
-    const fetchSMemoryDataAndUpdate = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/api/S-memory`);
-        const chartData = response.data;
-
-        if (chartData.length > 0) {
-          const formattedData = chartData.map((item) => ({
-            name: item.hour.toString(),
-            '총 스왑 메모리': item['총 스왑 메모리'],
-            '사용 중인 스왑 메모리': item['사용 중인 스왑 메모리'],
-            '사용 가능한 스왑 메모리': item['사용 가능한 스왑 메모리'],
-          }));
-
-          setSMemory(formattedData);
-        }
-      } catch (error) {
-        console.error('Error fetching S-Memory data:', error);
-      }
-    };
-
-    fetchSMemoryDataAndUpdate();
-  }, [API_URL]);
-
-  useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDate(new Date().toLocaleDateString());
     }, 1000 * 60);
@@ -84,14 +60,16 @@ function Reports2() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        height: '90vh',
-        paddingTop: '20px',
+        height: '80vh',
+        paddingTop: '5px',
       }}
     >
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center', width: '70%' }}>
+        <div style={{ textAlign: 'center', width: '80%' }}>
+          {' '}
+          {/* Increased width to 80% */}
           <h4 style={{ marginBottom: '10px' }}>가상 메모리 사용 정보</h4>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={200}>
             <LineChart
               data={
                 Vmemory.length > 0
@@ -159,9 +137,11 @@ function Reports2() {
           marginTop: '10px',
         }}
       >
-        <div style={{ textAlign: 'center', width: '70%' }}>
+        <div style={{ textAlign: 'center', width: '80%' }}>
+          {' '}
+          {/* Increased width to 80% */}
           <h4 style={{ marginBottom: '10px' }}>스왑 메모리 사용 정보</h4>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={200}>
             <LineChart
               data={
                 Smemory.length > 0

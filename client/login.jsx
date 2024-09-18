@@ -18,14 +18,15 @@ const Login = () => {
         password,
       });
 
-      login(); // 로그인 상태를 Context에 저장
-      alert('Logged in successfully');
-    } catch (error) {
-      if (error.response) {
-        alert(`Error logging in: ${error.response.data.message}`);
+      if (response.data.success) {
+        login(userId);
+        setIsAdmin(response.data.isAdmin); // isAdmin 상태 업데이트
+        alert('Logged in successfully');
       } else {
-        alert('Error logging in');
+        alert('Invalid credentials');
       }
+    } catch (error) {
+      alert('Error logging in');
     }
   };
 
