@@ -23,7 +23,7 @@ function Reports2() {
   useEffect(() => {
     const fetchDataAndUpdate = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/v-memory`);
+        const response = await axios.get('${API_URL}/api/v-memory');
         const chartData = response.data;
 
         if (chartData.length >= 3) {
@@ -43,7 +43,31 @@ function Reports2() {
     };
 
     fetchDataAndUpdate();
-  }, [API_URL]);
+  }, []);
+
+  useEffect(() => {
+    const fetchSMemoryDataAndUpdate = async () => {
+      try {
+        const response = await axios.get('${API_URL}/api/S-memory');
+        const chartData = response.data;
+
+        if (chartData.length > 0) {
+          const formattedData = chartData.map((item) => ({
+            name: item.hour.toString(),
+            '총 스왑 메모리': item['총 스왑 메모리'],
+            '사용 중인 스왑 메모리': item['사용 중인 스왑 메모리'],
+            '사용 가능한 스왑 메모리': item['사용 가능한 스왑 메모리'],
+          }));
+
+          setSMemory(formattedData);
+        }
+      } catch (error) {
+        console.error('Error fetching S-Memory data:', error);
+      }
+    };
+
+    fetchSMemoryDataAndUpdate();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
