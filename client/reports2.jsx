@@ -23,7 +23,7 @@ function Reports2() {
   useEffect(() => {
     const fetchDataAndUpdate = async () => {
       try {
-        const response = await axios.get('${API_URL}/api/v-memory');
+        const response = await axios.get(`${API_URL}/api/v-memory`);
         const chartData = response.data;
 
         if (chartData.length >= 3) {
@@ -48,7 +48,7 @@ function Reports2() {
   useEffect(() => {
     const fetchSMemoryDataAndUpdate = async () => {
       try {
-        const response = await axios.get('${API_URL}/api/S-memory');
+        const response = await axios.get(`${API_URL}/api/S-memory`);
         const chartData = response.data;
 
         if (chartData.length > 0) {
