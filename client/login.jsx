@@ -10,6 +10,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // API URL을 환경 변수에서 가져옴
     const API_URL = import.meta.env.VITE_API_URL;
 
     try {

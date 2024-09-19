@@ -10,6 +10,9 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(''); // userId 상태 추가
 
+  // API URL을 환경 변수에서 가져옴
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     let isMounted = true;
 
