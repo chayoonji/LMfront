@@ -173,7 +173,7 @@ const Board = () => {
               required
             />
             <textarea
-              placeholder="내용"
+              placeholder={`\n서버 IP : \n\n관리자 ID : \n\n관리자 PW : \n\n회원가입할 때 작성한 이름 또는 ID :`}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
@@ -181,7 +181,7 @@ const Board = () => {
             {contentError && <p className="error">{contentError}</p>}
             <input
               type="text"
-              placeholder="작성자"
+              placeholder="작성자 - (회원가입 때 사용한 userID 이외의 이름을 작성하세요.)"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
               required
