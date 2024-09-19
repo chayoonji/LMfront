@@ -14,21 +14,21 @@ const PasswordModal = ({ onClose, onConfirm }) => {
   };
 
   return (
-    <div className="delete-modal-background">
-      <div className="delete-modal-content">
-        <h2 className="delete-modal-title">비밀번호 확인</h2>
+    <div className="modal-background">
+      <div className="modal-content">
+        <h2 className="modal-title">비밀번호 확인</h2>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="delete-modal-input"
+          className="modal-input"
           placeholder="비밀번호를 입력하세요"
         />
-        <div className="delete-modal-buttons">
-          <button className="delete-modal-button" onClick={onClose}>
+        <div className="modal-buttons">
+          <button className="modal-button" onClick={onClose}>
             취소
           </button>
-          <button className="delete-modal-button" onClick={handleConfirm}>
+          <button className="modal-button" onClick={handleConfirm}>
             확인
           </button>
         </div>
@@ -65,6 +65,13 @@ const PostDetail = () => {
         setContent(response.data.content);
         setAuthor(response.data.author);
         setUploadedFiles(response.data.files || []);
+
+        // 파일이 없으면 상태를 "진단 전"으로 설정
+        if (!response.data.files || response.data.files.length === 0) {
+          await axios.put(`${API_URL}/posts/${id}/status`, {
+            status: '진단 전',
+          });
+        }
       } catch (error) {
         setError('게시물을 불러오는 중 오류가 발생했습니다.');
         console.error('Error fetching post:', error.message);
@@ -74,7 +81,7 @@ const PostDetail = () => {
     };
 
     fetchPost();
-  }, [id, API_URL]);
+  }, [id]);
 
   useEffect(() => {
     if (showEditForm && textareaRef.current) {
@@ -91,10 +98,17 @@ const PostDetail = () => {
     formData.append('author', author);
 
     try {
+      // 게시물 수정 요청
       const response = await axios.put(`${API_URL}/posts/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+      });
+
+      // 파일이 추가되었는지 확인하고 상태 업데이트
+      const newStatus = files.length > 0 ? '진단 완료' : '진단 전';
+      await axios.put(`${API_URL}/posts/${id}/status`, {
+        status: newStatus,
       });
 
       if (response.status === 200) {
@@ -254,15 +268,35 @@ const PostDetail = () => {
                 <input
                   type="file"
                   onChange={(e) => handleFileChange(e, index)}
+                  className="file-input"
                 />
-                <button onClick={() => handleRemoveFile(index)}>삭제</button>
+                <button
+                  type="button"
+                  className="remove-file-button"
+                  onClick={() => handleRemoveFile(index)}
+                >
+                  파일 제거
+                </button>
               </div>
             ))}
-            {isAdmin && <button onClick={handleAddFile}>파일 추가</button>}
-            <div className="edit-form-buttons">
-              <button onClick={handleUpdatePost}>저장</button>
-              <button onClick={() => setShowEditForm(false)}>취소</button>
-            </div>
+            {isAdmin && (
+              <button
+                type="button"
+                className="add-file-button"
+                onClick={handleAddFile}
+              >
+                파일 추가
+              </button>
+            )}
+            <button className="save-button" onClick={handleUpdatePost}>
+              저장
+            </button>
+            <button
+              className="cancel-button"
+              onClick={() => setShowEditForm(false)}
+            >
+              취소
+            </button>
           </div>
         )}
       </div>
@@ -270,10 +304,7 @@ const PostDetail = () => {
       {showPasswordModal && (
         <PasswordModal
           onClose={() => setShowPasswordModal(false)}
-          onConfirm={(password) => {
-            setShowPasswordModal(false);
-            handleDeletePost(password);
-          }}
+          onConfirm={handleDeletePost}
         />
       )}
     </div>

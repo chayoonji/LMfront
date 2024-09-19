@@ -20,6 +20,7 @@ import Board from './Boardpost'; // Board 컴포넌트를 import 합니다
 import PostDetail from './PostDetail';
 import Diagnosis from './Diagnosis';
 import Routine from './routine';
+import Solutions from './SolutionPage';
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = React.useState(false);
@@ -39,7 +40,7 @@ function App() {
           />
           <Routes>
             <Route path="/guide" element={<Guide />} />
-            {/* <Route path="/routine" element={<Routine />} /> */}
+            <Route path="/routine" element={<Routine />} />
             <Route path="/login" element={<LoginComponent />} />
             <Route path="/team" element={<Team />} />
             <Route path="/" element={<Navigate to="/guide" />} />{' '}
@@ -54,10 +55,6 @@ function App() {
               element={<PrivateRoute element={<Reports2 />} />}
             />
             <Route
-              path="/routine"
-              element={<PrivateRoute element={<Routine />} />}
-            />
-            <Route
               path="/board"
               element={<PrivateRoute element={<Board />} />}
             />
@@ -68,6 +65,10 @@ function App() {
             <Route
               path="/diagnosis"
               element={<PrivateRoute element={<Diagnosis />} />}
+            />
+            <Route
+              path="/solutions"
+              element={<PrivateRoute element={<Solutions />} />}
             />
           </Routes>
         </div>

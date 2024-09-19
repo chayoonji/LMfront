@@ -9,6 +9,7 @@ const LoginComponent = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
+  // API URL을 환경 변수에서 가져옴
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e) => {

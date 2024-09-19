@@ -29,11 +29,11 @@ function Reports1() {
         if (chartData.length >= 3) {
           const formattedData = chartData.map((item) => ({
             name: item.hour.toString(),
-            '전체 CPU 사용률': item['전체 CPU 사용률'],
-            'P.C CPU 사용률': item['P.C CPU 사용률'],
-            'L.C CPU 사용률': item['L.C CPU 사용률'],
-            'P.C 코어 수': item['P.C 코어 수'],
-            'L.C 코어 수': item['L.C 코어 수'],
+            '전체 CPU 사용률': parseFloat(item['전체 CPU 사용률']),
+            'P.C CPU 사용률': parseFloat(item['P.C CPU 사용률']),
+            'L.C CPU 사용률': parseFloat(item['L.C CPU 사용률']),
+            'P.C 코어 수': parseInt(item['P.C 코어 수'], 10),
+            'L.C 코어 수': parseInt(item['L.C 코어 수'], 10),
           }));
 
           setCpuData(formattedData);
@@ -44,7 +44,7 @@ function Reports1() {
     };
 
     fetchDataAndUpdate();
-  }, [API_URL]);
+  }, []);
 
   useEffect(() => {
     const fetchCpuTimeDataAndUpdate = async () => {
@@ -52,12 +52,14 @@ function Reports1() {
         const response = await axios.get(`${API_URL}/api/cpu-time`);
         const chartData = response.data;
 
+        console.log('Fetched CPU Time Data in Frontend:', chartData); // 로그 추가
+
         if (chartData.length > 0) {
           const formattedData = chartData.map((item) => ({
             name: item.hour.toString(),
-            '사용자 시간': item['사용자 시간'],
-            '시스템 시간': item['시스템 시간'],
-            '유휴 시간': item['유휴 시간'],
+            '사용자 시간': parseFloat(item['사용자 시간']),
+            '시스템 시간': parseFloat(item['시스템 시간']),
+            '유휴 시간': parseFloat(item['유휴 시간']),
           }));
 
           setCpuTime(formattedData);
@@ -68,7 +70,7 @@ function Reports1() {
     };
 
     fetchCpuTimeDataAndUpdate();
-  }, [API_URL]);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -84,15 +86,15 @@ function Reports1() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-start', // Aligned slightly higher
-        height: '80vh', // Slightly reduced height for better central alignment
-        paddingTop: '5px', // Reduced top padding to move charts upward
+        justifyContent: 'flex-start',
+        height: '90vh',
+        paddingTop: '20px',
       }}
     >
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center', width: '80%' }}>
+        <div style={{ textAlign: 'center', width: '70%' }}>
           <h4 style={{ marginBottom: '10px' }}>CPU 사용률 및 코어 수</h4>
-          <ResponsiveContainer width="100%" height={200}>
+          <ResponsiveContainer width="100%" height={250}>
             <LineChart
               data={
                 cpuData.length > 0
@@ -168,13 +170,9 @@ function Reports1() {
           marginTop: '10px',
         }}
       >
-        <div style={{ textAlign: 'center', width: '80%' }}>
-          {' '}
-          {/* Increased width to 80% */}
+        <div style={{ textAlign: 'center', width: '70%' }}>
           <h4 style={{ marginBottom: '10px' }}>CPU 시간 비율</h4>
-          <ResponsiveContainer width="100%" height={200}>
-            {' '}
-            {/* Reduced height */}
+          <ResponsiveContainer width="100%" height={250}>
             <LineChart
               data={
                 cpuTime.length > 0
