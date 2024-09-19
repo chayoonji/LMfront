@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
       Cookies.remove('isAuthenticated');
       Cookies.remove('userId');
       setUserId(''); // userId 초기화
-      navigate('/login'); // 페이지 이동
+      // navigate('/login'); // 페이지 이동
     } catch (error) {
       console.error('Error during logout:', error);
     }
