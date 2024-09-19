@@ -8,7 +8,7 @@ function Guide() {
   return (
     <div className="main-container">
       <div className="guide-header">
-        <h1>환영합니다!</h1>
+        <h1>환영합니다~!</h1>
       </div>
       <div className="guide-content">
         <p>

@@ -20,11 +20,14 @@ import {
 function JuTongGiBanChuiYakJum() {
   const [data1, setData1] = useState([]);
 
+  // API URL을 환경 변수에서 가져옴
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     // 데이터를 가져오고 업데이트하는 함수
     const fetchDataAndUpdate = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/api/data');
+        const response = await axios.get(`${API_URL}/api/data`);
         const chartData = response.data;
 
         if (chartData.length >= 1) {

@@ -5,9 +5,7 @@ import { useAuth } from '../Context/AuthContext';
 const Login = () => {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
-
-  const API_URL = import.meta.env.VITE_API_URL;
+  const { login, setIsAdmin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

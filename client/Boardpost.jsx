@@ -15,14 +15,15 @@ const Board = () => {
   const [passwordInput, setPasswordInput] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [error, setError] = useState('');
-  const [currentPage, setCurrentPage] = useState(1); // Pagination
-  const postsPerPage = 4; // Posts per page
-  const [contentError, setContentError] = useState(''); // Content length error
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 번호
+  const postsPerPage = 4; // 페이지당 표시할 게시물 수
+  const [contentError, setContentError] = useState(''); // 내용 길이 오류 상태
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAdmin } = useAuth(); // Get isAdmin status from AuthContext
+  const { isAdmin } = useAuth(); // AuthContext에서 isAdmin 상태 가져오기
 
+  // 백엔드 API URL을 환경 변수에서 가져옴
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const Board = () => {
   }, [location.state?.refresh]);
 
   useEffect(() => {
+    // Load status from localStorage if available
     const storedPosts = localStorage.getItem('posts');
     if (storedPosts) {
       setPosts(JSON.parse(storedPosts));
@@ -46,12 +48,15 @@ const Board = () => {
   }, []);
 
   useEffect(() => {
+    // Save posts to localStorage whenever posts change
     localStorage.setItem('posts', JSON.stringify(posts));
   }, [posts]);
 
+  // 제목에 [공지]가 포함된 게시물과 일반 게시물로 분리
   const noticePosts = posts.filter((post) => post.title.startsWith('[공지]'));
   const regularPosts = posts.filter((post) => !post.title.startsWith('[공지]'));
 
+  // 페이지 이동 핸들러
   const handleNextPage = () => {
     if (currentPage < Math.ceil(regularPosts.length / postsPerPage)) {
       setCurrentPage((prevPage) => prevPage + 1);
@@ -64,6 +69,7 @@ const Board = () => {
     }
   };
 
+  // 현재 페이지에 해당하는 게시물 목록을 계산
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentRegularPosts = regularPosts.slice(
@@ -71,6 +77,7 @@ const Board = () => {
     indexOfLastPost
   );
 
+  // 공지사항을 일반 게시물과 함께 표시
   const displayPosts =
     currentPage === 1
       ? [...noticePosts, ...currentRegularPosts]
@@ -78,6 +85,7 @@ const Board = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (content.length > 500) {
       setContentError('내용은 500자를 초과할 수 없습니다.');
       return;
@@ -96,7 +104,7 @@ const Board = () => {
       setPassword('');
       setAuthor('');
       setIsWriting(false);
-      setContentError('');
+      setContentError(''); // 오류 메시지 초기화
 
       const updatedPosts = await axios.get(`${API_URL}/posts`);
       setPosts(updatedPosts.data);
@@ -117,7 +125,10 @@ const Board = () => {
   const handlePostClick = (post) => {
     setSelectedPost(post);
     if (post.title.startsWith('[공지]') || isAdmin) {
-      navigate(`/post/${post._id}`, { state: { post } });
+      // 공지사항이거나 관리자인 경우 비밀번호 확인 없이 바로 게시물 보기
+      navigate(`/post/${post._id}`, {
+        state: { post },
+      });
     } else {
       setShowPasswordModal(true);
       setError('');
@@ -126,7 +137,10 @@ const Board = () => {
   };
 
   const handlePasswordSubmit = async () => {
-    if (isAdmin || selectedPost.title.startsWith('[공지]')) return;
+    if (isAdmin || selectedPost.title.startsWith('[공지]')) {
+      // 관리자인 경우 또는 공지사항인 경우 비밀번호 확인 로직을 실행하지 않음
+      return;
+    }
 
     try {
       const response = await axios.post(`${API_URL}/posts/check-password`, {
@@ -173,7 +187,7 @@ const Board = () => {
               required
             />
             <textarea
-              placeholder="내용"
+              placeholder={`\n서버 IP : \n\n관리자 ID : \n\n관리자 PW : \n\n회원가입할 때 작성한 이름 또는 ID :`}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
@@ -220,6 +234,7 @@ const Board = () => {
               )}
             </div>
 
+            {/* 페이지네이션 버튼 */}
             <div className="pagination">
               <button onClick={handlePrevPage} disabled={currentPage === 1}>
                 이전
@@ -242,22 +257,19 @@ const Board = () => {
           selectedPost &&
           !selectedPost.title.startsWith('[공지]') && (
             <div className="modal">
-              <div className="modal-content centered-modal">
+              <div className="modal-content">
                 <h2>{selectedPost.title} 보기</h2>
                 <input
                   type="password"
-                  className="modal-input"
                   placeholder="비밀번호"
                   value={passwordInput}
                   onChange={(e) => setPasswordInput(e.target.value)}
                 />
                 {error && <p className="error">{error}</p>}
-                <div className="modal-buttons">
-                  <button onClick={handlePasswordSubmit}>확인</button>
-                  <button onClick={() => setShowPasswordModal(false)}>
-                    취소
-                  </button>
-                </div>
+                <button onClick={handlePasswordSubmit}>확인</button>
+                <button onClick={() => setShowPasswordModal(false)}>
+                  취소
+                </button>
               </div>
             </div>
           )}
