@@ -53,10 +53,13 @@ const PostDetail = () => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const textareaRef = useRef(null);
 
+  // API URL을 환경 변수에서 가져옴
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await axios.get(`http://localhost:3002/posts/${id}`);
+        const response = await axios.get(`${API_URL}/posts/${id}`);
         setPost(response.data);
         setTitle(response.data.title);
         setContent(response.data.content);
@@ -65,7 +68,7 @@ const PostDetail = () => {
 
         // 파일이 없으면 상태를 "진단 전"으로 설정
         if (!response.data.files || response.data.files.length === 0) {
-          await axios.put(`http://localhost:3002/posts/${id}/status`, {
+          await axios.put(`${API_URL}/posts/${id}/status`, {
             status: '진단 전',
           });
         }
@@ -96,19 +99,15 @@ const PostDetail = () => {
 
     try {
       // 게시물 수정 요청
-      const response = await axios.put(
-        `http://localhost:3002/posts/${id}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      const response = await axios.put(`${API_URL}/posts/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
       // 파일이 추가되었는지 확인하고 상태 업데이트
       const newStatus = files.length > 0 ? '진단 완료' : '진단 전';
-      await axios.put(`http://localhost:3002/posts/${id}/status`, {
+      await axios.put(`${API_URL}/posts/${id}/status`, {
         status: newStatus,
       });
 
@@ -142,16 +141,13 @@ const PostDetail = () => {
 
   const handleDeletePost = async (password) => {
     try {
-      const response = await axios.post(
-        'http://localhost:3002/posts/check-password',
-        {
-          postId: id,
-          password: password,
-        }
-      );
+      const response = await axios.post('${API_URL}/posts/check-password', {
+        postId: id,
+        password: password,
+      });
 
       if (response.data.valid) {
-        await axios.delete(`http://localhost:3002/posts/${id}`, {
+        await axios.delete(`${API_URL}/posts/${id}`, {
           data: { password: password },
         });
 
