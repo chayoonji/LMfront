@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './RegisterComponent.css';
+
+// 백엔드 API URL을 환경 변수에서 가져옴
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Register = () => {
   const [userId, setUserId] = useState('');
@@ -10,14 +14,31 @@ const Register = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [idCheckResult, setIdCheckResult] = useState('');
-
-  const API_URL = import.meta.env.VITE_API_URL; // API URL을 환경 변수에서 가져옴
+  const [passwordError, setPasswordError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      if (!/(?=.*[a-zA-Z])/.test(password)) {
+        setPasswordError('영문자를 포함해야 합니다');
+      } else if (!/(?=.*\d)/.test(password)) {
+        setPasswordError('숫자를 포함해야 합니다');
+      } else if (!/(?=.*[@$!%*?&])/.test(password)) {
+        setPasswordError('특수문자를 포함해야 합니다');
+      } else if (password.length < 8) {
+        setPasswordError('비밀번호는 8자리 이상이어야 합니다');
+      }
+      return;
+    }
+
+    setPasswordError('');
+
     if (!isVerified) {
-      alert('Please verify your company email first');
+      alert('회사 이메일 인증부터 먼저 해주세요.');
       return;
     }
 
@@ -30,9 +51,9 @@ const Register = () => {
         verificationCode,
       });
       setRegistrationSuccess(true);
-      alert('User registered successfully');
+      alert('회원가입이 완료되었습니다');
     } catch (error) {
-      alert('Error registering user');
+      alert('회원가입에 실패했습니다');
     }
   };
 
@@ -41,9 +62,9 @@ const Register = () => {
       await axios.post(`${API_URL}/verify-company-email`, {
         companyEmail,
       });
-      alert('Verification code sent successfully');
+      alert('인증 코드 메일 전송에 성공했습니다');
     } catch (error) {
-      alert('Error sending verification code');
+      alert('인증 코드 메일 전송에 실패했습니다');
     }
   };
 
@@ -55,12 +76,12 @@ const Register = () => {
       });
       if (response.data.success) {
         setIsVerified(true);
-        alert('Company email verified successfully');
+        alert('회사 이메일 인증에 성공했습니다');
       } else {
-        alert('Invalid verification code');
+        alert('회사 이메일 인증에 실패했습니다');
       }
     } catch (error) {
-      alert('Error verifying code');
+      alert('인증 코드가 잘못되었습니다');
     }
   };
 
@@ -70,122 +91,98 @@ const Register = () => {
         userId,
       });
       if (response.data.exists) {
-        setIdCheckResult('User ID is already taken.');
-        setIdCheckResultStyle({ color: 'red' });
+        setIdCheckResult('이미 사용중인 아이디입니다');
       } else {
-        setIdCheckResult('User ID is available.');
-        setIdCheckResultStyle({ color: 'green' });
+        setIdCheckResult('사용 가능한 아이디입니다');
       }
     } catch (error) {
-      alert('Error checking user ID');
+      alert('아이디 중복 체크에 문제가 있습니다.');
     }
   };
-
-  const [idCheckResultStyle, setIdCheckResultStyle] = useState({});
-
-  const inputStyle = { width: '100%', marginBottom: '20px', height: '40px' };
-  const buttonStyle = {
-    marginLeft: '10px',
-    height: '40px',
-    marginTop: '-10px',
-  };
-  const reducedMarginStyle = {
-    width: '100%',
-    marginBottom: '10px',
-    height: '40px',
-  };
-  const borderRadiusStyle = { borderRadius: '5px' };
 
   if (registrationSuccess) {
     window.location.reload();
   }
 
   return (
-    <div className="login-wrapper">
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit} id="login-form">
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={inputStyle}
-        />
-        <input
-          type="text"
-          name="userId"
-          placeholder="User ID"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          style={inputStyle}
-        />
-        <button
-          type="button"
-          onClick={handleCheckDuplicate}
-          style={{ ...buttonStyle, ...borderRadiusStyle }}
-        >
-          Check Duplicate
-        </button>
-        <span style={idCheckResultStyle}>{idCheckResult}</span>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginBottom: '10px',
-          }}
-        >
+    <div className="main-container">
+      <div className="register-container">
+        <h2 className="register-title">회원가입</h2>
+        <form onSubmit={handleSubmit} className="register-form">
           <input
             type="text"
-            name="companyEmail"
-            placeholder="Company Email"
-            value={companyEmail}
-            onChange={(e) => setCompanyEmail(e.target.value)}
-            style={{ ...reducedMarginStyle, ...borderRadiusStyle }}
+            name="name"
+            placeholder="이름"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="register-input"
           />
-          <button
-            type="button"
-            onClick={handleSendVerificationCode}
-            style={{ ...buttonStyle, ...borderRadiusStyle }}
-          >
-            Send Verification Code
-          </button>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginBottom: '10px',
-          }}
-        >
+          <div className="input-group">
+            <input
+              type="text"
+              name="userId"
+              placeholder="아이디"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              className="register-input"
+            />
+            <button
+              type="button"
+              onClick={handleCheckDuplicate}
+              className="register-button"
+            >
+              아이디 중복 체크
+            </button>
+          </div>
+          <span className="id-check-result">{idCheckResult}</span>
+          <div className="input-group">
+            <input
+              type="text"
+              name="companyEmail"
+              placeholder="회사 이메일 주소"
+              value={companyEmail}
+              onChange={(e) => setCompanyEmail(e.target.value)}
+              className="register-input"
+            />
+            <button
+              type="button"
+              onClick={handleSendVerificationCode}
+              className="register-button"
+            >
+              인증 코드 메일 전송
+            </button>
+          </div>
+          <div className="input-group">
+            <input
+              type="text"
+              name="verificationCode"
+              placeholder="인증 코드 입력"
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value)}
+              className="register-input"
+            />
+            <button
+              type="button"
+              onClick={handleVerifyCode}
+              className="register-button"
+            >
+              입력한 인증 코드 확인
+            </button>
+          </div>
           <input
-            type="text"
-            name="verificationCode"
-            placeholder="Verification Code"
-            value={verificationCode}
-            onChange={(e) => setVerificationCode(e.target.value)}
-            style={{ ...reducedMarginStyle, ...borderRadiusStyle }}
+            type="password"
+            name="password"
+            placeholder="비밀번호"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="register-input"
           />
-          <button
-            type="button"
-            onClick={handleVerifyCode}
-            style={{ ...buttonStyle, ...borderRadiusStyle }}
-          >
-            Verify Code
+          {passwordError && <p className="password-error">{passwordError}</p>}
+          <button type="submit" className="register-submit-button">
+            회원가입
           </button>
-        </div>
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={reducedMarginStyle}
-        />
-        <div className="button-container">
-          <input type="submit" value="Register" style={{ height: '40px' }} />
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

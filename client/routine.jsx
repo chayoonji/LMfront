@@ -1,38 +1,44 @@
-import React, { useState } from "react";
-import axios from "axios";
-import "./UploadButton.css"; // CSS 파일을 임포트합니다.
+import React, { useState } from 'react';
+import axios from 'axios';
+import './UploadButton.css';
+import { useAuth } from './Context/AuthContext';
+
+// 백엔드 API URL을 환경 변수에서 가져옴
+const API_URL = import.meta.env.VITE_API_URL;
 
 const UploadButton = () => {
-  const [userId, setUserId] = useState("");
+  const { isAdmin, userId, setUserId } = useAuth(); // AuthContext에서 isAdmin과 userId 가져오기
   const [isUserIdSet, setIsUserIdSet] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-
-  const API_URL = import.meta.env.VITE_API_URL; // API URL을 환경 변수에서 가져옴
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleSetUserId = async () => {
+    if (!userId) {
+      setSuccessMessage('회원가입할때 등록했던 아이디를 입력해주세요');
+      return;
+    }
+
     try {
       const response = await axios.post(`${API_URL}/set-user-id`, {
         userId,
       });
       console.log(response.data.message);
       setIsUserIdSet(true);
-      setSuccessMessage("User ID has been set successfully!");
-      // 데이터 초기화
-      resetData();
+      setSuccessMessage('등록한 아이디로 데이터 베이스 설정에 성공했습니다');
     } catch (error) {
-      console.error("Error setting user ID:", error);
-      setSuccessMessage("Failed to set User ID. Please try again.");
+      console.error(
+        '아이디로 데이터 베이스 설정하는데 문제가 있습니다:',
+        error
+      );
+      setSuccessMessage('아이디로 데이터 베이스 설정하는데 실패했습니다');
     }
-  };
-
-  const resetData = () => {
-    // 데이터 초기화 로직 추가 (예: 상태를 리셋하거나, 필요시 추가 작업 수행)
   };
 
   const handleUpload = async () => {
     if (!isUserIdSet) {
-      console.error("User ID not set.");
-      setSuccessMessage("Please set the User ID first.");
+      console.error('데이터 베이스 설정을 안 했습니다');
+      setSuccessMessage(
+        '프로그램 페이지에서 데이터 베이스 설정을 먼저 해주세요'
+      );
       return;
     }
 
@@ -42,37 +48,52 @@ const UploadButton = () => {
         {},
         {
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
       console.log(response.data);
-      setSuccessMessage("File uploaded successfully!");
+      setSuccessMessage('데이터 베이스에 파일 업로드를 성공적으로 마쳤습니다');
     } catch (error) {
-      console.error("Error uploading files:", error);
-      setSuccessMessage("File upload failed. Please try again.");
+      console.error('파일 업로드하는데 문제가 발생했습니다:', error);
+      setSuccessMessage(
+        '데이터 베이스에 파일 업로드를 실패했습니다. 다시 시도해주세요'
+      );
     }
   };
 
   return (
-    <div className="upload-container">
-      <h1 className="upload-title">JSON 파일 업로드</h1>
-      <div className="upload-input-group">
-        <input
-          type="text"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          placeholder="Enter User ID"
-          className="upload-input"
-        />
-        <button onClick={handleSetUserId} className="upload-button">
-          Set User ID
-        </button>
+    <div className="main-container">
+      <div className="upload-container">
+        <h1 className="upload-title">DB 설정</h1>
+        <div className="upload-input-group">
+          <input
+            type="text"
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+            placeholder="아이디를 입력해주세요"
+            className="upload-input"
+          />
+          <button onClick={handleSetUserId} className="upload-button">
+            데이터 베이스 설정
+          </button>
+        </div>
+
+        {isAdmin && isUserIdSet && (
+          <button onClick={handleUpload} className="upload-button">
+            JSON 파일 DB에 업로드
+          </button>
+        )}
+
+        {/* userId가 설정되지 않았으면 그래프를 숨김 */}
+        {isUserIdSet && userId ? (
+          <div>{/* 그래프를 표시하는 컴포넌트 */}</div>
+        ) : (
+          <p>그래프를 표시하려면 아이디를 먼저 입력하세요.</p>
+        )}
+
+        {successMessage && <p className="success-message">{successMessage}</p>}
       </div>
-      <button onClick={handleUpload} className="upload-button">
-        Upload
-      </button>
-      {successMessage && <p className="success-message">{successMessage}</p>}
     </div>
   );
 };

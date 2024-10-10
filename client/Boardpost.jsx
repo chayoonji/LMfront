@@ -2,20 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
+import './Guide.css';
+import { useAuth } from './Context/AuthContext';
 
 const Board = () => {
   const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [author, setAuthor] = useState('');
   const [password, setPassword] = useState('');
   const [isWriting, setIsWriting] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [passwordInput, setPasswordInput] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 4;
+  const [contentError, setContentError] = useState('');
+
   const navigate = useNavigate();
   const location = useLocation();
+  const { userId, isAdmin } = useAuth();
 
   // 백엔드 API URL을 환경 변수에서 가져옴
   const API_URL = import.meta.env.VITE_API_URL;
@@ -31,30 +37,72 @@ const Board = () => {
     };
 
     fetchPosts();
-  }, [location.state?.refresh]); // 위치 상태 변경 시 게시물 업데이트
+  }, [location.state?.refresh]);
+
+  useEffect(() => {
+    const storedPosts = localStorage.getItem('posts');
+    if (storedPosts) {
+      setPosts(JSON.parse(storedPosts));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('posts', JSON.stringify(posts));
+  }, [posts]);
+
+  const noticePosts = posts.filter((post) => post.title.startsWith('[공지]'));
+  const regularPosts = posts.filter((post) => !post.title.startsWith('[공지]'));
+
+  const handleNextPage = () => {
+    if (currentPage < Math.ceil(regularPosts.length / postsPerPage)) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentRegularPosts = regularPosts.slice(
+    indexOfFirstPost,
+    indexOfLastPost
+  );
+
+  const displayPosts =
+    currentPage === 1
+      ? [...noticePosts, ...currentRegularPosts]
+      : currentRegularPosts;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (content.length > 500) {
+      setContentError('내용은 500자를 초과할 수 없습니다.');
+      return;
+    }
 
     try {
       await axios.post(`${API_URL}/posts`, {
         title,
         content,
-        author,
+        author: userId,
         password,
       });
       alert('글이 성공적으로 작성되었습니다.');
       setTitle('');
       setContent('');
       setPassword('');
-      setAuthor('');
       setIsWriting(false);
+      setContentError('');
 
-      // 게시물 목록 새로고침
       const updatedPosts = await axios.get(`${API_URL}/posts`);
       setPosts(updatedPosts.data);
     } catch (error) {
-      console.error('Error creating post:', error.message);
+      console.error('게시물 생성중 오류가 발생했습니다:', error.message);
       alert('글 작성 중 오류가 발생했습니다: ' + error.message);
     }
   };
@@ -69,12 +117,23 @@ const Board = () => {
 
   const handlePostClick = (post) => {
     setSelectedPost(post);
-    setShowPasswordModal(true);
-    setError('');
-    setPasswordInput('');
+    if (post.author === userId || isAdmin) {
+      // 작성자 본인 또는 관리자일 경우 비밀번호 확인 없이 바로 게시물 보기
+      navigate(`/post/${post._id}`, {
+        state: { post },
+      });
+    } else {
+      setShowPasswordModal(true);
+      setError('');
+      setPasswordInput('');
+    }
   };
 
   const handlePasswordSubmit = async () => {
+    if (selectedPost.author === userId || isAdmin) {
+      return; // 작성자 본인 또는 관리자인 경우 비밀번호 확인 로직을 실행하지 않음
+    }
+
     try {
       const response = await axios.post(`${API_URL}/posts/check-password`, {
         postId: selectedPost._id,
@@ -82,11 +141,9 @@ const Board = () => {
       });
 
       if (response.data.valid) {
-        // 선택한 게시물의 상세 정보 가져오기
         const postResponse = await axios.get(
           `${API_URL}/posts/${selectedPost._id}`
         );
-        // 상세 페이지로 이동
         navigate(`/post/${selectedPost._id}`, {
           state: { post: postResponse.data },
         });
@@ -111,6 +168,7 @@ const Board = () => {
             </button>
           )}
         </div>
+
         {isWriting ? (
           <form onSubmit={handleSubmit} className="board-form">
             <input
@@ -121,18 +179,14 @@ const Board = () => {
               required
             />
             <textarea
-              placeholder="내용"
+              placeholder={
+                '서버 IP : \n\n관리자 ID : \n\n관리자 PW : \n\n루트 비밀번호 : \n\n진단 완료 알림 받을 이메일 :'
+              }
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
             />
-            <input
-              type="text"
-              placeholder="작성자"
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-              required
-            />
+            {contentError && <p className="error">{contentError}</p>}
             <input
               type="password"
               placeholder="비밀번호"
@@ -148,38 +202,65 @@ const Board = () => {
             </div>
           </form>
         ) : (
-          <div className="posts-list">
-            {posts.length > 0 ? (
-              posts.map((post) => (
-                <div key={post._id} className="post-item">
-                  <h2 onClick={() => handlePostClick(post)}>{post.title}</h2>
-                  <small>작성자: {post.author}</small>
-                </div>
-              ))
-            ) : (
-              <p>게시물이 없습니다.</p>
-            )}
-          </div>
+          <>
+            <div className="posts-list">
+              {displayPosts.length > 0 ? (
+                displayPosts.map((post) => (
+                  <div
+                    key={post._id}
+                    className="post-item"
+                    onClick={() => handlePostClick(post)}
+                  >
+                    <h2>{post.title}</h2>
+                    {(post.author === userId || isAdmin) && (
+                      <small>작성자: {post.author}</small>
+                    )}
+                    <small>진행 상태: {post.status}</small>
+                  </div>
+                ))
+              ) : (
+                <p>게시물이 없습니다</p>
+              )}
+            </div>
+
+            <div className="pagination">
+              <button onClick={handlePrevPage} disabled={currentPage === 1}>
+                이전
+              </button>
+              <span>페이지 {currentPage}</span>
+              <button
+                onClick={handleNextPage}
+                disabled={
+                  currentPage === Math.ceil(regularPosts.length / postsPerPage)
+                }
+              >
+                다음
+              </button>
+            </div>
+          </>
         )}
 
-        {showPasswordModal && selectedPost && (
+        {!isAdmin && showPasswordModal && selectedPost && (
           <div className="modal">
             <div className="modal-content">
-              <h2>{selectedPost.title}</h2> {/* 선택된 게시물의 제목 표시 */}
+              <h2>{selectedPost.title} 보기</h2>
               <input
                 type="password"
-                placeholder="비밀번호를 입력하세요"
+                placeholder="비밀번호"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
-                className="modal-input"
               />
-              {error && <p className="error-message">{error}</p>}
-              <div className="modal-buttons">
-                <button onClick={handlePasswordSubmit}>확인</button>
-                <button onClick={() => setShowPasswordModal(false)}>
-                  취소
-                </button>
-              </div>
+              {error && <p className="error">{error}</p>}
+              <button onClick={handlePasswordSubmit}>확인</button>
+              <button
+                onClick={() => {
+                  setShowPasswordModal(false);
+                  setError('');
+                  setPasswordInput('');
+                }}
+              >
+                취소
+              </button>
             </div>
           </div>
         )}

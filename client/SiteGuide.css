@@ -1,0 +1,289 @@
+.site-guide-container {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+}
+
+/* Centered content container */
+.site-guide-content {
+  flex: 1;
+  margin-top: 40px;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333;
+}
+
+.information-hero {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.information-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.information-title {
+  position: absolute;
+  top: 64%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  gap: 15px;
+}
+
+.button-group button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #8f8f8f;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button-group button:hover {
+  background-color: #575757;
+}
+
+.button-group button.active {
+  background-color: #6b90b7;
+}
+
+/* Guide Section Title */
+.site-guide-section-title {
+  font-size: 28px;
+  color: #222;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Individual gray box for each emphasized element */
+.site-guide-box-wrapper {
+  margin-bottom: 50px;
+}
+
+.site-guide-box {
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+  border-radius: 12px;
+}
+
+/* Increase spacing between sections */
+.site-guide-content .section-spacing {
+  margin-top: 80px;
+}
+
+/* Individual gray box for each emphasized element */
+.site-guide-grid-emphasized .left-right-layout,
+.site-guide-grid-emphasized .right-left-layout {
+  border: 3px solid #333;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+/* Grid for the images and text (text will be outside the image) */
+.site-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Three larger images per row */
+  gap: 30px; /* Increase space between images */
+  margin-bottom: 50px; /* Increase space below the grid */
+}
+
+/* Image styles with rounded corners and black border */
+.site-guide-image {
+  width: 100%; /* Full width for the images */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 20px; /* More rounded corners */
+  border: 3px solid black; /* Thicker black border */
+  display: block;
+  margin-bottom: 20px; /* Space between the image and the text */
+}
+
+/* Style for the text below the image */
+.site-guide-text {
+  font-size: 18px; /* Increase font size */
+  color: #333;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.site-guide-text h3 {
+  font-size: 22px; /* Larger titles */
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.site-guide-text p {
+  font-size: 16px; /* Larger description text */
+  color: #666;
+  line-height: 1.8; /* Increase line height for better readability */
+}
+
+/* Boxed content around the IP and password details */
+.boxed-content {
+  border: 2px solid #333; /* Black border */
+  padding: 20px; /* Padding inside the box */
+  border-radius: 12px; /* Rounded corners */
+  background-color: #f9f9f9; /* Light background for contrast */
+  max-width: 500px; /* Limit the width of the box */
+  margin-top: 30px;
+  margin-left: -5px;
+  margin-bottom: 10px; /* Space below the box */
+  font-size: 18px; /* Increase the text size */
+}
+
+/* Style for the instruction section */
+.instruction-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 50px 0;
+  margin-bottom: 50px; /* Space below the section */
+}
+
+/* Style for the instruction text on the left */
+.instruction-content {
+  flex: 1;
+  max-width: 600px;
+  padding-right: 40px; /* Space between text and image */
+}
+
+.instruction-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.instruction-content p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* Style for the image on the right */
+.instruction-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.instruction-image img {
+  max-width: 100%;
+  border-radius: 10px; /* Rounded corners for the image */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+}
+
+/* Style adjustments for the hero section */
+.information-hero {
+  position: relative;
+  width: 100%;
+  height: 300px;
+}
+
+.information-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.information-title {
+  position: absolute;
+  top: 64%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Emphasized layout for '로그인 후' elements */
+.site-guide-grid-emphasized {
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr; /* One item per row */
+  gap: 50px; /* Increase space between items */
+  margin-bottom: 50px; /* Increase space below the grid */
+}
+
+/* Layout for left-right and right-left positioning */
+.left-right-layout,
+.right-left-layout {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 40px;
+  border: 3px solid #333; /* Add a thick gray border for each element */
+  padding: 30px;
+  border-radius: 12px;
+}
+
+.left-right-layout .site-guide-text-emphasized,
+.right-left-layout .site-guide-text-emphasized {
+  margin-left: 20px; /* Add appropriate spacing between the image and the text */
+  margin-right: 20px; /* Ensure the spacing is consistent for both layouts */
+}
+
+.left-right-layout .site-guide-text-emphasized,
+.right-left-layout .site-guide-text-emphasized {
+  flex: 1;
+  font-size: 20px;
+  color: #222;
+  font-weight: bold;
+}
+
+.right-left-layout {
+  flex-direction: row-reverse;
+}
+
+.site-guide-image-emphasized-small {
+  width: 40%; /* Reduce the image size for emphasized sections */
+  height: auto;
+  border-radius: 20px;
+  border: 5px solid #004e1a;
+  display: block;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.site-guide-text-emphasized {
+  font-size: 20px;
+  color: #222;
+  text-align: left;
+  margin-top: 0;
+  font-weight: bold;
+}
+
+.site-guide-text-emphasized p {
+  margin-left: 110px;
+  font-size: 18px;
+  color: #333;
+  line-height: 1.8;
+}
+
+.site-guide-text-emphasized h3 {
+  margin-left: 110px;
+  font-size: 25px;
+  color: #333;
+  line-height: 1.8;
+  font: bold;
+}
