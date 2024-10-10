@@ -11,6 +11,9 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+// 백엔드 API URL을 환경 변수에서 가져옴
+const API_URL = import.meta.env.VITE_API_URL;
+
 // 숫자 포맷을 처리하는 유틸리티 함수
 const parseNumber = (value) => {
   if (typeof value === 'object' && value.$numberDouble) {
