@@ -13,13 +13,19 @@ import {
   BsMenuButtonWideFill,
   BsFillGearFill,
   BsBoxArrowRight,
+  BsHouseFill, // Add this icon for 'Main Home'
 } from 'react-icons/bs';
+import './Sidebar.css'; // Add this to import the new CSS
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   const navigate = useNavigate();
   const authContext = useAuth();
-  const isAuthenticated = (authContext && authContext.isAuthenticated) ? authContext.isAuthenticated : false;
-  const logout = (authContext && authContext.logout) ? authContext.logout : () => {};
+  const isAuthenticated =
+    authContext && authContext.isAuthenticated
+      ? authContext.isAuthenticated
+      : false;
+  const logout =
+    authContext && authContext.logout ? authContext.logout : () => {};
 
   const handleReportsClick = (e) => {
     e.preventDefault();
@@ -27,13 +33,18 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   };
 
   const handleRegisterClick = (e) => {
-    e.preventDefault();
-    navigate('/register');
+    e.preventDefault(); // 기본 링크 동작 방지
+    navigate('/register'); // 페이지 이동
   };
 
-  const handleLogoutClick = () => {
+  const handleLogoutClick = (e) => {
+    e.preventDefault();
     logout();
     navigate('/login');
+  };
+
+  const handleMainHomeClick = () => {
+    navigate('/Home');
   };
 
   return (
@@ -43,79 +54,95 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
     >
       <div className="sidebar-title">
         <div className="sidebar-brand">
-          <Link to="/" style={{ textDecoration: 'none', color: '#9e9ea4' }}>
-            <BsCart3 className="icon_header" /> 강김홍차
+          <Link
+            to="/guide"
+            style={{ textDecoration: 'none', color: '#9e9ea4' }}
+          >
+            {' '}
+            강김홍차
           </Link>
         </div>
       </div>
 
       <ul className="sidebar-list">
-        <li className="sidebar-list-item">
+        {/* <li className="sidebar-list-item">
           <Link to="/guide">
             <BsGrid1X2Fill className="icon" /> 가이드
           </Link>
         </li>
 
         <li className="sidebar-list-item">
-          <Link to="/routine">
-            <BsFillArchiveFill className="icon" /> 프로그램
-          </Link>
-        </li>
-        <li className="sidebar-list-item">
           <Link to="/team">
             <BsFillGrid3X3GapFill className="icon" /> 팀원 소개
           </Link>
-        </li>
+        </li> */}
 
         {!isAuthenticated && (
           <>
-            <li className="sidebar-list-item">
-              <Link to="/login" onClick={handleReportsClick}>
-                <BsFillGearFill className="icon" /> Login
-              </Link>
+            <li className="sidebar-list-item" onClick={handleReportsClick}>
+              <div className="sidebar-link">
+                <BsFillGearFill className="icon" /> 로그인
+              </div>
             </li>
-            <li className="sidebar-list-item">
-              <Link to="/register" onClick={handleRegisterClick}>
+            <li className="sidebar-list-item" onClick={handleRegisterClick}>
+              <div className="sidebar-link">
                 <BsFillGearFill className="icon" /> 회원가입
-              </Link>
+              </div>
             </li>
           </>
         )}
 
         {isAuthenticated && (
           <>
-            <li className="sidebar-list-item">
-              <Link to="/reports1">
-                <BsMenuButtonWideFill className="icon" /> CPU Reports
-              </Link>
+            <li
+              className="sidebar-list-item"
+              onClick={() => navigate('/routine')}
+            >
+              <div className="sidebar-link">
+                <BsFillArchiveFill className="icon" /> 프로그램
+              </div>
             </li>
 
-            <li className="sidebar-list-item">
-              <Link to="/reports2">
+            <li
+              className="sidebar-list-item"
+              onClick={() => navigate('/reports1')}
+            >
+              <div className="sidebar-link">
+                <BsMenuButtonWideFill className="icon" /> CPU Reports
+              </div>
+            </li>
+
+            <li
+              className="sidebar-list-item"
+              onClick={() => navigate('/reports2')}
+            >
+              <div className="sidebar-link">
                 <BsMenuButtonWideFill className="icon" /> Memory Reports
-              </Link>
+              </div>
             </li>
-            <li className="sidebar-list-item">
-              <Link to="/Board">
+            <li
+              className="sidebar-list-item"
+              onClick={() => navigate('/Board')}
+            >
+              <div className="sidebar-link">
                 <BsPeopleFill className="icon" /> 게시판
-              </Link>
+              </div>
             </li>
-            <li className="sidebar-list-item">
-              <button
-                onClick={handleLogoutClick}
-                style={{
-                  border: 'none',
-                  background: 'none',
-                  padding: 0,
-                  margin: 0,
-                }}
-              >
-                <BsBoxArrowRight className="icon" /> Logout
+            <li className="sidebar-list-item" onClick={handleLogoutClick}>
+              <button className="icon">
+                <BsBoxArrowRight className="icon" /> 로그아웃
               </button>
             </li>
           </>
         )}
       </ul>
+
+      {/* Main Home button */}
+      <div className="sidebar-bottom">
+        <button onClick={handleMainHomeClick} className="main-home-btn">
+          <BsHouseFill className="icon" /> 메인홈
+        </button>
+      </div>
     </aside>
   );
 }
