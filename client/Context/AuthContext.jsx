@@ -4,6 +4,9 @@ import axios from 'axios';
 
 const AuthContext = createContext();
 
+// 백엔드 API URL을 환경 변수에서 가져옴
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -55,7 +58,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (newUserId, newPassword) => {
     // 비밀번호를 매개변수로 추가
     try {
-      const response = await axios.post('http://localhost:3002/login', {
+      const response = await axios.post(`${API_URL}/login`, {
         userId: newUserId,
         password: newPassword, // 비밀번호 포함
       });
@@ -86,7 +89,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('http://localhost:3002/reset-database-values');
+      await axios.post(`${API_URL}/reset-database-values`);
       setIsAuthenticated(false);
       setIsAdmin(false);
       Cookies.remove('isAuthenticated');
