@@ -45,7 +45,7 @@ const HowAbout = () => {
         {/* 세 번째 이미지 추가 */}
         <div className="image-container right-bottom">
           <img
-            src="/images/feature3.png"
+            src="/images/feature5.png"
             alt="실시간 조회"
             className="feature-image"
           />
