@@ -83,7 +83,7 @@ function SiteGuide() {
                 </p>
               </div>
               <div className="instruction-image">
-                <img src="/images/Guide4.png" alt="설명 이미지" />
+                <img src="/images/Guide8.png" alt="설명 이미지" />
               </div>
             </div>
           </div>
@@ -98,7 +98,7 @@ function SiteGuide() {
                   <div className="left-right-layout">
                     <img
                       className="site-guide-image-emphasized-small"
-                      src="/images/Guide8.png"
+                      src="/images/Guide5.png"
                       alt="DB 연결하기"
                     />
                     <div className="site-guide-text-emphasized">
