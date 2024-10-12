@@ -22,7 +22,7 @@ function SiteGuide() {
                       alt="회원가입"
                     />
                     <div className="site-guide-text">
-                      <h3>회원가입</h3>
+                      <h3>1. 회원가입</h3>
                       <p>데이터가 저장되는 DB명을 아이디로 설정해주세요.</p>
                     </div>
                   </div>
@@ -33,7 +33,7 @@ function SiteGuide() {
                       alt="로그인"
                     />
                     <div className="site-guide-text">
-                      <h3>로그인</h3>
+                      <h3>2. 로그인</h3>
                       <p>
                         로그인시 사이드바의 이용 가능한 페이지들이 활성화됩니다.
                       </p>

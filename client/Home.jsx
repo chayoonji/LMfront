@@ -128,7 +128,7 @@ const Home = () => {
           >
             <SwiperSlide>
               <div className="guide-card">
-                <img src="/images/1image.png" alt="Step 1" />
+                <img src="/images/SignUpImage.png" alt="Step 1" />
                 <div className="guide-caption">
                   <p>1. 회원가입</p>
                 </div>
@@ -137,7 +137,7 @@ const Home = () => {
 
             <SwiperSlide>
               <div className="guide-card">
-                <img src="/images/2image.png" alt="Step 2" />
+                <img src="/images/Login.png" alt="Step 2" />
                 <div className="guide-caption">
                   <p>2. 로그인, 로그아웃</p>
                 </div>
@@ -146,7 +146,7 @@ const Home = () => {
 
             <SwiperSlide>
               <div className="guide-card">
-                <img src="/images/3image.png" alt="Step 3" />
+                <img src="/images/Gaesipan.png" alt="Step 3" />
                 <div className="guide-caption">
                   <p>3. 로그인 후 게시판 페이지에 글쓰기</p>
                 </div>
@@ -158,7 +158,7 @@ const Home = () => {
                 className="guide-card"
                 // onClick={() => openModal('/images/4image.png')}
               >
-                <img src="/images/4image.png" alt="Step 4" />
+                <img src="/images/Reports.png" alt="Step 4" />
                 <div className="guide-caption">
                   <p>4. 결과물 기다리기</p>
                 </div>
@@ -170,7 +170,7 @@ const Home = () => {
                 className="guide-card"
                 // onClick={() => openModal('/images/6image.png')}
               >
-                <img src="/images/5image.png" alt="Step 5" />
+                <img src="/images/Program.png" alt="Step 5" />
                 <div className="guide-caption">
                   <p>5. DB설정하기</p>
                 </div>
