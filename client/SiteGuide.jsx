@@ -98,7 +98,7 @@ function SiteGuide() {
                   <div className="left-right-layout">
                     <img
                       className="site-guide-image-emphasized-small"
-                      src="/images/Guide5.png"
+                      src="/images/Guide8.png"
                       alt="DB 연결하기"
                     />
                     <div className="site-guide-text-emphasized">
