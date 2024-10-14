@@ -69,7 +69,7 @@ const EmailModal = ({ onClose, onSend }) => {
               취소
             </button>
             <button className="modal-button" onClick={handleSend}>
-              전송
+              전
             </button>
           </div>
         </div>
