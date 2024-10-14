@@ -69,7 +69,7 @@ const EmailModal = ({ onClose, onSend }) => {
               취소
             </button>
             <button className="modal-button" onClick={handleSend}>
-              전
+              전송
             </button>
           </div>
         </div>
@@ -279,12 +279,15 @@ const PostDetail = () => {
                     >
                       삭제
                     </button>
-                    <button
-                      className="diagnosis-button"
-                      onClick={handleDiagnosisClick}
-                    >
-                      진단 결과 보기
-                    </button>
+                    {/* 진단 상태가 "진단 전"이 아닌 경우에만 진단 결과 보기 버튼을 보여줌 */}
+                    {post.status !== '진단 전' && (
+                      <button
+                        className="diagnosis-button"
+                        onClick={handleDiagnosisClick}
+                      >
+                        진단 결과 보기
+                      </button>
+                    )}
                     {/* isAdmin이 true일 때만 이메일 전송 버튼 표시 */}
                     {isAdmin && (
                       <button
