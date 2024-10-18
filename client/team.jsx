@@ -26,7 +26,7 @@ const Team = () => {
     {
       name: '홍예진',
       image: '/images/Team4.png',
-      position: '리눅스 스크립트 & 원격 모니터링 개발',
+      position: '리눅스 스크립트 </br>&</br> 원격 모니터링 개발',
     },
   ];
 
