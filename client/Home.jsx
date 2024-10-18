@@ -302,7 +302,7 @@ const Home = () => {
               <div>
                 프로그램 사이트
                 <span>
-                  <a href="/" target="_blank" rel="noreferrer">
+                  <a href="/guide" target="_blank" rel="noreferrer">
                     바로가기
                   </a>
                 </span>
